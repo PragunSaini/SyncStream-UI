@@ -12,12 +12,10 @@
   "lint-staged": {
     "*.{js,jsx}": [
       "prettier --write --single-quote",
-      "eslint --fix",
-      "git add"
+      "eslint --fix"
     ],
     "*.(scss,css,md)": [
-      "prettier --write --single-quote",
-      "git add"
+      "prettier --write --single-quote"
     ]
   },
   "husky": {
