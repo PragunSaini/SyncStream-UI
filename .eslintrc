@@ -1,5 +1,12 @@
 {
   "parser": "babel-eslint",
+  "parserOptions": {
+    "ecmaVersion": 10,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
   "plugins": ["react", "jest", "prettier"],
   "extends": ["airbnb", "plugin:prettier/recommended", "prettier/react"],
   "globals": {
@@ -46,7 +53,7 @@
     "react/jsx-boolean-value": ["warn", "never"],
     "react/jsx-closing-bracket-location": ["warn", "after-props"],
     "react/jsx-curly-spacing": ["warn", "never"],
-    "react/jsx-filename-extension": ["warn", { "extensions": [".jsx"] }],
+    "react/jsx-filename-extension": ["off", { "extensions": [".jsx"] }],
     "react/jsx-first-prop-new-line": ["warn", "multiline"],
     "react/jsx-handler-names": [
       "warn",
