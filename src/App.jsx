@@ -4,19 +4,21 @@ import { hot } from 'react-hot-loader/root';
 // Here we import all the custom made components from components folder
 import Title from './components/Title/Title';
 import Body from './components/Body/Body';
+import TestCompo from './components/TestCompo/testCompo';
 
 // This is the main App which will be the final webpage
 const App = () => {
   // Ye return statement mein ya  to custom components use karlo ya fir html ke tags
   return (
-    <>
+    <div>
       <Title />
       <Body name="Pragun Saini" age="19" />
       <hr />
       <Body name="Yash Pal" age="20" />
       <hr />
       <Body name="Kuldeep" age="2000" />
-    </>
+      <TestCompo name="SachMe" />
+    </div>
   );
 };
 
