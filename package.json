@@ -11,8 +11,7 @@
   },
   "lint-staged": {
     "*.{js,jsx}": [
-      "prettier --write --single-quote",
-      "eslint --fix"
+      "prettier --write --single-quote"
     ],
     "*.(scss,css,md)": [
       "prettier --write --single-quote"
