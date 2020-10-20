@@ -4,7 +4,7 @@ import { hot } from 'react-hot-loader/root';
 // Here we import all the custom made components from components folder
 import Title from './components/Title/Title';
 import Body from './components/Body/Body';
-import TestCompo from './components/TestCompo/testCompo';
+import TestCompo from './components/TestCompo/TestCompo';
 
 // This is the main App which will be the final webpage
 const App = () => {
