@@ -1,10 +1,12 @@
 import React from 'react';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import { CssBaseline } from '@material-ui/core';
 import { hot } from 'react-hot-loader/root';
 
-import MainNav from './components/MainNav/MainNav';
 import HomeContent from './components/HomeContent/HomeContent';
+import Login from './components/Login/Login';
+import Register from './components/Register/Register';
 
 const App = () => {
   const muiTheme = React.useMemo(
@@ -25,8 +27,19 @@ const App = () => {
   return (
     <ThemeProvider theme={muiTheme}>
       <CssBaseline />
-      <MainNav />
-      <HomeContent />
+      <Router>
+        <Switch>
+          <Route path="/login">
+            <Login />
+          </Route>
+          <Route path="/register">
+            <Register />
+          </Route>
+          <Route exact path="/">
+            <HomeContent />
+          </Route>
+        </Switch>
+      </Router>
     </ThemeProvider>
   );
 };

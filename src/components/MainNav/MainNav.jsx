@@ -1,5 +1,6 @@
 import React from 'react';
-import { AppBar, Toolbar, Typography, Button } from '@material-ui/core';
+import { Link as RouterLink } from 'react-router-dom';
+import { AppBar, Toolbar, Typography, Button, Link } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(() => ({
@@ -15,9 +16,16 @@ const MainNav = () => {
     <AppBar position="static">
       <Toolbar>
         <Typography variant="h5" className={classes.title}>
-          SyncStream
+          <Link component={RouterLink} to="/" color="inherit">
+            SyncStream
+          </Link>
         </Typography>
-        <Button color="inherit">Login</Button>
+        <Button component={RouterLink} to="/login" color="inherit">
+          Login
+        </Button>
+        <Button component={RouterLink} to="/register" color="inherit">
+          Register
+        </Button>
       </Toolbar>
     </AppBar>
   );
