@@ -4,9 +4,11 @@ import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import { CssBaseline } from '@material-ui/core';
 import { hot } from 'react-hot-loader/root';
 
-import HomeContent from './components/HomeContent/HomeContent';
-import Login from './components/Login/Login';
-import Register from './components/Register/Register';
+import { AuthContextProvider } from './utils/authContext';
+
+import Home from './pages/Home/Home';
+import Login from './pages/Login/Login';
+import Register from './pages/Register/Register';
 
 const App = () => {
   const muiTheme = React.useMemo(
@@ -27,19 +29,21 @@ const App = () => {
   return (
     <ThemeProvider theme={muiTheme}>
       <CssBaseline />
-      <Router>
-        <Switch>
-          <Route path="/login">
-            <Login />
-          </Route>
-          <Route path="/register">
-            <Register />
-          </Route>
-          <Route exact path="/">
-            <HomeContent />
-          </Route>
-        </Switch>
-      </Router>
+      <AuthContextProvider>
+        <Router>
+          <Switch>
+            <Route path="/login">
+              <Login />
+            </Route>
+            <Route path="/register">
+              <Register />
+            </Route>
+            <Route exact path="/">
+              <Home />
+            </Route>
+          </Switch>
+        </Router>
+      </AuthContextProvider>
     </ThemeProvider>
   );
 };

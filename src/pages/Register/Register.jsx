@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import {
   Avatar,
@@ -8,9 +8,14 @@ import {
   Grid,
   Typography,
   Container,
+  FormHelperText,
+  Snackbar,
 } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { makeStyles } from '@material-ui/core/styles';
+
+import { register } from '../../utils/api';
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -34,6 +39,27 @@ const useStyles = makeStyles(theme => ({
 
 const Register = () => {
   const classes = useStyles();
+  const [error, setError] = useState('');
+  const [open, setOpen] = useState(false);
+
+  const onSubmit = e => {
+    e.preventDefault();
+    const data = new FormData(e.target);
+    register({
+      name: data.get('name'),
+      username: data.get('username'),
+      password: data.get('password'),
+    })
+      .then(() => setOpen(true))
+      .catch(err => setError(err.response.data.msg));
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpen(false);
+  };
 
   return (
     <Container component="main" maxWidth="xs">
@@ -44,7 +70,7 @@ const Register = () => {
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
-        <form className={classes.form} noValidate>
+        <form className={classes.form} noValidate onSubmit={onSubmit}>
           <TextField
             margin="normal"
             autoComplete="name"
@@ -77,6 +103,11 @@ const Register = () => {
             id="password"
             autoComplete="current-password"
           />
+          {error !== '' && (
+            <FormHelperText error>
+              <Typography variant="body2">{error}</Typography>
+            </FormHelperText>
+          )}
           <Button
             type="submit"
             fullWidth
@@ -99,6 +130,15 @@ const Register = () => {
           </Grid>
         </form>
       </div>
+      <Snackbar
+        open={open}
+        autoHideDuration={2000}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+        <Alert onClose={handleClose} severity="success">
+          Successfully Registered. Please login.
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };

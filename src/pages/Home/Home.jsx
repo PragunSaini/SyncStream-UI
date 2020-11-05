@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Typography, Paper } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
-import MainNav from '../MainNav/MainNav';
+import MainNav from '../../components/MainNav/MainNav';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const HomeContent = () => {
+const Home = () => {
   const classes = useStyles();
 
   return (
@@ -39,4 +39,4 @@ const HomeContent = () => {
   );
 };
 
-export default HomeContent;
+export default Home;

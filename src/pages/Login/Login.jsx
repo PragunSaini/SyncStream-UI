@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link as RouterLink, useHistory } from 'react-router-dom';
 import {
   Avatar,
   Button,
@@ -8,10 +8,12 @@ import {
   Paper,
   Grid,
   Typography,
+  FormHelperText,
 } from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { makeStyles } from '@material-ui/core/styles';
 
+import { useAuth } from '../../utils/authContext';
 import Background from '../../assets/login_bg.jpg';
 
 const useStyles = makeStyles(theme => ({
@@ -45,6 +47,24 @@ const useStyles = makeStyles(theme => ({
 
 const Login = () => {
   const classes = useStyles();
+  const { login } = useAuth();
+  const history = useHistory();
+  const [error, setError] = useState('');
+
+  const onSubmit = e => {
+    e.preventDefault();
+    const data = new FormData(e.target);
+    login({
+      username: data.get('username'),
+      password: data.get('password'),
+    })
+      .then(() => {
+        history.push('/');
+      })
+      .catch(err => {
+        setError(err.response.data.msg);
+      });
+  };
 
   return (
     <Grid container component="main" className={classes.root}>
@@ -57,7 +77,7 @@ const Login = () => {
           <Typography component="h1" variant="h4">
             Sign in
           </Typography>
-          <form className={classes.form} noValidate>
+          <form className={classes.form} noValidate onSubmit={onSubmit}>
             <TextField
               margin="normal"
               required
@@ -78,6 +98,7 @@ const Login = () => {
               id="password"
               autoComplete="current-password"
             />
+            {error !== '' && <FormHelperText error>{error}</FormHelperText>}
             <Button
               type="submit"
               fullWidth
