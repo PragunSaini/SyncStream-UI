@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8000';
+// const API_URL = 'http://localhost:8000'; // for dev
+const API_URL = 'http://52.230.105.58'; // for prod
 
 const getHeaders = () => {
   const userData = JSON.parse(window.localStorage.getItem('user')) || null;
