@@ -1,7 +1,9 @@
 import axios from 'axios';
 
-// const API_URL = 'http://localhost:8000'; // for dev
-const API_URL = 'https://syncstream.southeastasia.cloudapp.azure.com'; // for prod
+const API_URL =
+  process.env.NODE_ENV === 'production'
+    ? 'https://syncstream.southeastasia.cloudapp.azure.com'
+    : 'http://localhost:8000';
 
 const getHeaders = () => {
   const userData = JSON.parse(window.localStorage.getItem('user')) || null;

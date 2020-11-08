@@ -50,6 +50,9 @@ const MainNav = () => {
         )}
         {auth && (
           <>
+            <Button color="inherit" component={RouterLink} to="/chat">
+              Chat
+            </Button>
             <Button
               color="inherit"
               startIcon={<PersonIcon />}
