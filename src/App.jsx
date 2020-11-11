@@ -10,6 +10,7 @@ import Home from './pages/Home/Home';
 import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
 import Chat from './pages/Chat/Chat';
+import Stream from './pages/Stream/Stream';
 
 const App = () => {
   const muiTheme = React.useMemo(
@@ -53,6 +54,9 @@ const AppRoutes = () => {
         </Route>
         <Route path="/chat">
           <Chat />
+        </Route>
+        <Route path="/stream">
+          <Stream />
         </Route>
         <Route exact path="/">
           <Home />
