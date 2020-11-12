@@ -1,6 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import {
+  ThemeProvider,
+  createMuiTheme,
+  responsiveFontSizes,
+} from '@material-ui/core/styles';
 import { CssBaseline } from '@material-ui/core';
 import { hot } from 'react-hot-loader/root';
 
@@ -15,16 +19,18 @@ import Stream from './pages/Stream/Stream';
 const App = () => {
   const muiTheme = React.useMemo(
     () =>
-      createMuiTheme({
-        palette: {
-          primary: {
-            main: '#b71c1c',
+      responsiveFontSizes(
+        createMuiTheme({
+          palette: {
+            primary: {
+              main: '#b71c1c',
+            },
+            secondary: {
+              main: '#1cb7b7',
+            },
           },
-          secondary: {
-            main: '#1cb7b7',
-          },
-        },
-      }),
+        })
+      ),
     []
   );
 
