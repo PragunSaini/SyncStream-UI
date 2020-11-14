@@ -12,7 +12,7 @@ const useStyles = makeStyles(theme => ({
   button: { flexGrow: 1 },
 }));
 
-const RoomMenu = ({ setViewChat }) => {
+const RoomMenu = ({ setViewChat, setOpenSettings }) => {
   const classes = useStyles();
 
   return (
@@ -29,7 +29,10 @@ const RoomMenu = ({ setViewChat }) => {
         className={classes.button}>
         Room Chat
       </Button>
-      <Button color="primary" className={classes.button}>
+      <Button
+        color="primary"
+        className={classes.button}
+        onClick={() => setOpenSettings(true)}>
         Settings
       </Button>
     </div>
@@ -38,6 +41,7 @@ const RoomMenu = ({ setViewChat }) => {
 
 RoomMenu.propTypes = {
   setViewChat: PropTypes.func,
+  setOpenSettings: PropTypes.func,
 };
 
 export default RoomMenu;

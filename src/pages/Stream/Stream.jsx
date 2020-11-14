@@ -7,6 +7,7 @@ import RoomMenu from '../../components/RoomMenu/RoomMenu';
 import RoomChat from '../../components/RoomChat/RoomChat';
 import Playlist from '../../components/Playlist/Playlist';
 import MemberList from '../../components/MemberList/MemberList';
+import RoomSettings from '../../components/RoomSettings/RoomSettings';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -27,6 +28,7 @@ const useStyles = makeStyles(theme => ({
 const Stream = () => {
   const classes = useStyles();
   const [viewChat, setViewChat] = useState(true);
+  const [openSettings, setOpenSettings] = useState(true);
 
   return (
     <div className={classes.root}>
@@ -38,10 +40,14 @@ const Stream = () => {
           </div>
         </Grid>
         <Grid item xs={12} md={3}>
-          <RoomMenu setViewChat={setViewChat} />
+          <RoomMenu
+            setViewChat={setViewChat}
+            setOpenSettings={setOpenSettings}
+          />
           <Playlist display={!viewChat} />
           <RoomChat display={viewChat} />
           <MemberList />
+          <RoomSettings open={openSettings} setOpen={setOpenSettings} />
         </Grid>
       </Grid>
     </div>
@@ -50,4 +56,4 @@ const Stream = () => {
 
 export default Stream;
 
-// TODO: 1) Make settings dialog, 2) Make new shit responsive
+// TODO: 1) Make new shit responsive
