@@ -39,8 +39,8 @@ const Stream = () => {
         </Grid>
         <Grid item xs={12} md={3}>
           <RoomMenu setViewChat={setViewChat} />
-          <RoomChat display={viewChat} />
           <Playlist display={!viewChat} />
+          <RoomChat display={viewChat} />
           <MemberList />
         </Grid>
       </Grid>
@@ -49,3 +49,5 @@ const Stream = () => {
 };
 
 export default Stream;
+
+// TODO: 1) Make settings dialog, 2) Make new shit responsive

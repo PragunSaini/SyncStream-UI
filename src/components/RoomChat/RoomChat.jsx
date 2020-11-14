@@ -37,13 +37,14 @@ const useStyles = makeStyles(theme => ({
 
 const useItemStyles = makeStyles(theme => ({
   root: {
-    margin: theme.spacing(1, 0, 1, 0),
+    margin: theme.spacing(0.5, 0, 1, 0),
     backgroundColor: fade(theme.palette.grey[400], 0.1),
     padding: theme.spacing(1, 2),
     borderRadius: '0 15px 15px 15px',
   },
   name: {
-    fontWeight: '700',
+    fontWeight: theme.typography.fontWeightBold,
+    margin: theme.spacing(0.5, 0),
   },
 }));
 

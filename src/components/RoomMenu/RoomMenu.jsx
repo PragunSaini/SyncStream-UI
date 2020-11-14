@@ -27,7 +27,7 @@ const RoomMenu = ({ setViewChat }) => {
         color="primary"
         onClick={() => setViewChat(true)}
         className={classes.button}>
-        Room
+        Room Chat
       </Button>
       <Button color="primary" className={classes.button}>
         Settings
