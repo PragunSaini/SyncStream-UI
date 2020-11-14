@@ -6,6 +6,9 @@ const useStyles = makeStyles(theme => ({
   root: {
     marginTop: theme.spacing(2),
     marginRight: theme.spacing(2),
+    [theme.breakpoints.down('sm')]: {
+      marginBottom: theme.spacing(2),
+    },
   },
   memberCnt: {
     textAlign: 'center',

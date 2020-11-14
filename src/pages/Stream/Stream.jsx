@@ -28,18 +28,18 @@ const useStyles = makeStyles(theme => ({
 const Stream = () => {
   const classes = useStyles();
   const [viewChat, setViewChat] = useState(true);
-  const [openSettings, setOpenSettings] = useState(true);
+  const [openSettings, setOpenSettings] = useState(false);
 
   return (
     <div className={classes.root}>
-      <RoomNav roomTitle="My awesome room is tha " />
+      <RoomNav roomTitle="Test Room" />
       <Grid container spacing={2} className={classes.main}>
-        <Grid item xs={12} md={9}>
+        <Grid item xs={12} md={8} lg={9}>
           <div className={classes.videoDiv}>
             <Youtube />
           </div>
         </Grid>
-        <Grid item xs={12} md={3}>
+        <Grid item xs={12} md={4} lg={3}>
           <RoomMenu
             setViewChat={setViewChat}
             setOpenSettings={setOpenSettings}

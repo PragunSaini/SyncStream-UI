@@ -14,6 +14,14 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
     padding: theme.spacing(1),
     overflowY: 'auto',
+    [theme.breakpoints.down('sm')]: {
+      width: '80%',
+      marginLeft: 'auto',
+      marginRight: 'auto',
+    },
+    [theme.breakpoints.down('xs')]: {
+      width: '100%',
+    },
   },
   noDisplay: {
     display: 'none',

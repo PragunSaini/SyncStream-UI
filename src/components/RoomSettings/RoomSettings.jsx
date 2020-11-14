@@ -58,9 +58,9 @@ const RoomSettings = ({ open, setOpen }) => {
               <TableHead>
                 <TableRow>
                   <TableCell>Permission</TableCell>
-                  <TableCell>Add</TableCell>
-                  <TableCell>Remove</TableCell>
-                  <TableCell>Kick</TableCell>
+                  <TableCell>Guest</TableCell>
+                  <TableCell>Mod</TableCell>
+                  <TableCell>Owner</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>

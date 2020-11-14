@@ -7,6 +7,8 @@ import {
   makeStyles,
   InputBase,
   fade,
+  Tooltip,
+  useMediaQuery,
 } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 
@@ -14,6 +16,7 @@ const useStyles = makeStyles(theme => ({
   title: {
     width: 'auto',
     marginRight: theme.spacing(2),
+    whiteSpace: 'nowrap',
   },
   grow: {
     flexGrow: 0.5,
@@ -54,13 +57,18 @@ const useStyles = makeStyles(theme => ({
 
 const RoomNav = ({ roomTitle }) => {
   const classes = useStyles();
+  const matches = useMediaQuery(theme => theme.breakpoints.down('sm'));
 
   return (
     <AppBar position="static">
       <Toolbar variant="dense">
-        <Typography variant="h6" component="h1" className={classes.title}>
-          {roomTitle}
-        </Typography>
+        <Tooltip title={roomTitle}>
+          <Typography variant="h6" component="h1" className={classes.title}>
+            {matches
+              ? roomTitle.slice(0, 8) + (roomTitle.length < 8 ? '' : '..')
+              : roomTitle}
+          </Typography>
+        </Tooltip>
         <div className={`${classes.search} ${classes.grow}`}>
           <div className={classes.searchIcon}>
             <SearchIcon />

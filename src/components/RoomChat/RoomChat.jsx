@@ -10,6 +10,14 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     padding: 0,
+    [theme.breakpoints.down('sm')]: {
+      width: '80%',
+      marginLeft: 'auto',
+      marginRight: 'auto',
+    },
+    [theme.breakpoints.down('xs')]: {
+      width: '100%',
+    },
   },
   chats: {
     flexGrow: 1,
