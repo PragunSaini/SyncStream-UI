@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   AppBar,
@@ -9,8 +9,13 @@ import {
   fade,
   Tooltip,
   useMediaQuery,
+  Card,
+  ClickAwayListener,
+  Button,
 } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
+
+import { checkAndExtractId, getVideoDetails } from '../../utils/youtube-api';
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -53,11 +58,60 @@ const useStyles = makeStyles(theme => ({
     transition: theme.transitions.create('width'),
     width: '100%',
   },
+  rec: {
+    position: 'absolute',
+    width: '100%',
+    top: '110%',
+    left: 0,
+    backgroundColor: theme.palette.grey[200],
+    zIndex: 10,
+    padding: theme.spacing(0.5),
+    margin: 0,
+    display: 'flex',
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column',
+    },
+  },
+  recinfo: {
+    marginLeft: theme.spacing(1),
+    flexGrow: 1,
+  },
+  rectitle: {
+    fontWeight: theme.typography.fontWeightBold,
+  },
 }));
 
 const RoomNav = ({ roomTitle }) => {
   const classes = useStyles();
   const matches = useMediaQuery(theme => theme.breakpoints.down('sm'));
+  const [rec, setRec] = useState(null);
+  const [open, setOpen] = useState(true);
+
+  const handleClose = () => {
+    setOpen(false);
+    setRec(null);
+  };
+
+  const handleLinkChange = e => {
+    const { value } = e.target;
+    if (value.length < 9) {
+      setOpen(false);
+      return;
+    } // too short url bro
+    const vid = checkAndExtractId(value);
+    if (vid == null || vid.length < 11) {
+      setOpen(false);
+      return;
+    } // no vid detected :(
+    getVideoDetails(vid).then(video => {
+      setRec(video);
+      if (video != null) {
+        setOpen(true);
+      } else {
+        setOpen(false);
+      }
+    });
+  };
 
   return (
     <AppBar position="static">
@@ -80,7 +134,26 @@ const RoomNav = ({ roomTitle }) => {
               input: classes.inputInput,
             }}
             inputProps={{ 'aria-label': 'search video' }}
+            onChange={handleLinkChange}
           />
+          {open && rec && (
+            <ClickAwayListener onClickAway={handleClose}>
+              <Card elevation={2} className={classes.rec}>
+                <img src={rec.snippet.thumbnails.default.url} alt="thumbnail" />
+                <div className={classes.recinfo}>
+                  <Typography variant="body1" className={classes.rectitle}>
+                    {rec.snippet.title}
+                  </Typography>
+                  <Typography variant="body2">
+                    {rec.snippet.channelTitle}
+                  </Typography>
+                </div>
+                <Button variant="outlined" onClick={handleClose}>
+                  Add
+                </Button>
+              </Card>
+            </ClickAwayListener>
+          )}
         </div>
       </Toolbar>
     </AppBar>
