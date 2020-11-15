@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles, Typography, InputBase, fade } from '@material-ui/core';
+
+import { sendChat, subscribeChatMessage } from '../../socket/socket';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -56,26 +58,37 @@ const useItemStyles = makeStyles(theme => ({
   },
 }));
 
-const RoomChat = ({ display }) => {
+const RoomChat = ({ display, name }) => {
   const classes = useStyles();
+  const [msg, setMsg] = useState('');
+  const [chats, setChats] = useState([]);
+
+  useEffect(() => {
+    subscribeChatMessage(data => setChats(chats => [...chats, data]));
+  }, []);
+
+  const onSendChat = e => {
+    if (msg === '') return;
+    if (e.key === 'Enter') {
+      setMsg('');
+      sendChat({ name, msg });
+    }
+  };
 
   return (
     <div className={`${classes.root} ${display ? '' : classes.noDisplay}`}>
       <div className={classes.chats}>
-        <ChatItem
-          msg={{ name: 'Pragun', data: "I'm almost there dude wait for me" }}
-        />
-        <ChatItem
-          msg={{
-            name: 'JOJ',
-            data:
-              'K, I hear you, meet you ate the docks at the end of the next town',
-          }}
-        />
+        {chats.map((chat, ind) => (
+          // eslint-disable-next-line
+          <ChatItem msg={chat} key={ind} />
+        ))}
       </div>
       <InputBase
         classes={{ root: classes.typeRoot }}
         placeholder="Type your message.."
+        value={msg}
+        onChange={e => setMsg(e.target.value)}
+        onKeyPress={onSendChat}
       />
     </div>
   );
@@ -89,7 +102,7 @@ const ChatItem = ({ msg }) => {
       <Typography variant="body2" className={classes.name}>
         {msg.name}
       </Typography>
-      <Typography variant="body1">{msg.data}</Typography>
+      <Typography variant="body1">{msg.msg}</Typography>
     </div>
   );
 };
@@ -100,6 +113,7 @@ ChatItem.propTypes = {
 
 RoomChat.propTypes = {
   display: PropTypes.bool,
+  name: PropTypes.string,
 };
 
 export default RoomChat;

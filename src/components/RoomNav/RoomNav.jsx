@@ -16,6 +16,7 @@ import {
 import SearchIcon from '@material-ui/icons/Search';
 
 import { checkAndExtractId, getVideoDetails } from '../../utils/youtube-api';
+import { addPlaylistItem } from '../../socket/socket';
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -81,7 +82,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const RoomNav = ({ roomTitle }) => {
+const RoomNav = ({ roomTitle, name }) => {
   const classes = useStyles();
   const matches = useMediaQuery(theme => theme.breakpoints.down('sm'));
   const [rec, setRec] = useState(null);
@@ -111,6 +112,17 @@ const RoomNav = ({ roomTitle }) => {
         setOpen(false);
       }
     });
+  };
+
+  const onAddPlayItem = () => {
+    addPlaylistItem({
+      name,
+      vid: rec.id,
+      title: rec.snippet.title,
+      thumbUrl: rec.snippet.thumbnails.default.url,
+      channelTitle: rec.snippet.channelTitle,
+    });
+    handleClose();
   };
 
   return (
@@ -148,7 +160,7 @@ const RoomNav = ({ roomTitle }) => {
                     {rec.snippet.channelTitle}
                   </Typography>
                 </div>
-                <Button variant="outlined" onClick={handleClose}>
+                <Button variant="outlined" onClick={onAddPlayItem}>
                   Add
                 </Button>
               </Card>
@@ -162,6 +174,7 @@ const RoomNav = ({ roomTitle }) => {
 
 RoomNav.propTypes = {
   roomTitle: PropTypes.string,
+  name: PropTypes.string,
 };
 
 export default RoomNav;

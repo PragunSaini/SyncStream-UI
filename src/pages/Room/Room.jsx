@@ -9,6 +9,10 @@ import {
   subscribeNewJoin,
   subscribeMemberExit,
   subscribeRoomInfo,
+  subscribePlayAdd,
+  subscribePlayDelete,
+  subscribePlayDown,
+  subscribePlayUp,
 } from '../../socket/socket';
 
 import Youtube from '../../components/Youtube/Youtube';
@@ -46,6 +50,7 @@ const Room = () => {
   useEffect(() => {
     // Subscribe to socket events
     subscribeRoomInfo(data => setRoomInfo(data));
+
     subscribeNewJoin(data =>
       setRoomInfo(roominfo => ({
         ...roominfo,
@@ -57,6 +62,37 @@ const Room = () => {
         ...roominfo,
         members: roominfo.members.filter(member => member.socketid !== data),
       }))
+    );
+
+    subscribePlayAdd(data =>
+      setRoomInfo(roominfo => ({
+        ...roominfo,
+        playlist: [...roominfo.playlist, data],
+      }))
+    );
+    subscribePlayDelete(data =>
+      setRoomInfo(roominfo => ({
+        ...roominfo,
+        playlist: roominfo.playlist.filter(play => play.id !== data),
+      }))
+    );
+    subscribePlayUp(data =>
+      setRoomInfo(roominfo => {
+        const playlist = [...roominfo.playlist];
+        const ind = playlist.findIndex(item => item.id === data);
+        if (ind === 0) return playlist;
+        [playlist[ind], playlist[ind - 1]] = [playlist[ind - 1], playlist[ind]];
+        return { ...roominfo, playlist };
+      })
+    );
+    subscribePlayDown(data =>
+      setRoomInfo(roominfo => {
+        const playlist = [...roominfo.playlist];
+        const ind = playlist.findIndex(item => item.id === data);
+        if (ind === playlist.length - 1) return playlist;
+        [playlist[ind], playlist[ind + 1]] = [playlist[ind + 1], playlist[ind]];
+        return { ...roominfo, playlist };
+      })
     );
 
     // Send room joining event
@@ -76,7 +112,7 @@ const Room = () => {
 
   return (
     <div className={classes.root}>
-      <RoomNav roomTitle={roomInfo.name} />
+      <RoomNav roomTitle={roomInfo.name} name={userData.name} />
       <Grid container spacing={2} className={classes.main}>
         <Grid item xs={12} md={8} lg={9}>
           <div className={classes.videoDiv}>
@@ -88,8 +124,8 @@ const Room = () => {
             setViewChat={setViewChat}
             setOpenSettings={setOpenSettings}
           />
-          <Playlist display={!viewChat} />
-          <RoomChat display={viewChat} />
+          <Playlist display={!viewChat} playlist={roomInfo.playlist} />
+          <RoomChat display={viewChat} name={userData.name} />
           <MemberList members={roomInfo.members} />
           <RoomSettings open={openSettings} setOpen={setOpenSettings} />
         </Grid>

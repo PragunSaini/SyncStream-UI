@@ -5,6 +5,12 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import DeleteIcon from '@material-ui/icons/Delete';
 
+import {
+  deletePlaylistItem,
+  movePlaylistItemDown,
+  movePlaylistItemUp,
+} from '../../socket/socket';
+
 const useStyles = makeStyles(theme => ({
   root: {
     height: '60vh',
@@ -69,21 +75,14 @@ const useItemStyles = makeStyles(theme => ({
   },
 }));
 
-const Playlist = ({ display }) => {
+const Playlist = ({ display, playlist }) => {
   const classes = useStyles();
-
-  const samplePlaylistItem = {
-    thumb: 'https://i.ytimg.com/vi/tC8631Kqzb0/default.jpg',
-    title: 'Coming Back to Life',
-    channel: 'Pink Floyd',
-    addedBy: 'Pragun Saini',
-  };
 
   return (
     <div className={`${classes.root} ${display ? '' : classes.noDisplay}`}>
-      <PlaylistItem item={samplePlaylistItem} />
-      <PlaylistItem item={samplePlaylistItem} />
-      <PlaylistItem item={samplePlaylistItem} />
+      {playlist.map(playitem => (
+        <PlaylistItem item={playitem} key={playitem.id} />
+      ))}
     </div>
   );
 };
@@ -101,7 +100,7 @@ const PlaylistItem = ({ item }) => {
       onMouseEnter={onHover}
       onMouseLeave={onHoverOut}>
       <img
-        src={item.thumb}
+        src={item.thumbUrl}
         alt={`Thumbnail for ${item.title}`}
         className={classes.img}
       />
@@ -109,21 +108,23 @@ const PlaylistItem = ({ item }) => {
         <Typography variant="body1" className={classes.title}>
           {item.title}
         </Typography>
-        <Typography variant="body2">{item.channel}</Typography>
+        <Typography variant="body2">{item.channelTitle}</Typography>
 
         <div
           className={`${classes.actionDiv} ${show ? '' : classes.noDisplay}`}>
-          <IconButton size="small">
+          <IconButton size="small" onClick={() => movePlaylistItemUp(item.id)}>
             <ExpandLessIcon color="secondary" />
           </IconButton>
-          <IconButton size="small">
+          <IconButton
+            size="small"
+            onClick={() => movePlaylistItemDown(item.id)}>
             <ExpandMoreIcon color="secondary" />
           </IconButton>
-          <IconButton size="small">
+          <IconButton size="small" onClick={() => deletePlaylistItem(item.id)}>
             <DeleteIcon color="secondary" />
           </IconButton>
           <Typography variant="body2" className={classes.addedBy}>
-            {item.addedBy}
+            {item.name}
           </Typography>
         </div>
       </div>
@@ -131,14 +132,13 @@ const PlaylistItem = ({ item }) => {
   );
 };
 
-// https://i.ytimg.com/vi/tC8631Kqzb0/default.jpg
-
 PlaylistItem.propTypes = {
   item: PropTypes.object,
 };
 
 Playlist.propTypes = {
   display: PropTypes.bool,
+  playlist: PropTypes.array,
 };
 
 export default Playlist;
