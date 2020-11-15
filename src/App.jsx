@@ -14,7 +14,7 @@ import Home from './pages/Home/Home';
 import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
 import Chat from './pages/Chat/Chat';
-import Stream from './pages/Stream/Stream';
+import Room from './pages/Room/Room';
 
 const App = () => {
   const muiTheme = React.useMemo(
@@ -61,8 +61,8 @@ const AppRoutes = () => {
         <Route path="/chat">
           <Chat />
         </Route>
-        <Route path="/stream">
-          <Stream />
+        <Route path="/room/:roomid(.{8})">
+          <Room />
         </Route>
         <Route exact path="/">
           <Home />

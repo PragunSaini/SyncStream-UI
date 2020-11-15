@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const Stream = () => {
+const Room = () => {
   const classes = useStyles();
   const [viewChat, setViewChat] = useState(true);
   const [openSettings, setOpenSettings] = useState(false);
@@ -54,6 +54,4 @@ const Stream = () => {
   );
 };
 
-export default Stream;
-
-// TODO: 1) Make new shit responsive
+export default Room;

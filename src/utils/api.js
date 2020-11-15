@@ -24,3 +24,18 @@ export const register = async data => {
 export const refresh = async () => {
   return axios.get(`${API_URL}/login/refresh`, { headers: getHeaders() });
 };
+
+// Room create/join
+export const createRoom = async () => {
+  return axios.post(`${API_URL}/room`, {}, { headers: getHeaders() });
+};
+
+export const joinRoom = async roomid => {
+  return axios.post(
+    `${API_URL}/room/join`,
+    { roomid },
+    {
+      headers: getHeaders(),
+    }
+  );
+};
