@@ -1,5 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { Grid, makeStyles } from '@material-ui/core';
+
+import { useAuth } from '../../utils/authContext';
+import {
+  joinRoom,
+  leaveRoom,
+  subscribeNewJoin,
+  subscribeMemberExit,
+  subscribeRoomInfo,
+} from '../../socket/socket';
 
 import Youtube from '../../components/Youtube/Youtube';
 import RoomNav from '../../components/RoomNav/RoomNav';
@@ -27,12 +37,46 @@ const useStyles = makeStyles(theme => ({
 
 const Room = () => {
   const classes = useStyles();
+  const { roomid } = useParams();
+  const { userData } = useAuth();
+  const [roomInfo, setRoomInfo] = useState(null);
   const [viewChat, setViewChat] = useState(true);
   const [openSettings, setOpenSettings] = useState(false);
 
+  useEffect(() => {
+    // Subscribe to socket events
+    subscribeRoomInfo(data => setRoomInfo(data));
+    subscribeNewJoin(data =>
+      setRoomInfo(roominfo => ({
+        ...roominfo,
+        members: [...roominfo.members, data],
+      }))
+    );
+    subscribeMemberExit(data =>
+      setRoomInfo(roominfo => ({
+        ...roominfo,
+        members: roominfo.members.filter(member => member.socketid !== data),
+      }))
+    );
+
+    // Send room joining event
+    joinRoom(roomid, {
+      username: userData.username,
+      name: userData.name,
+      id: userData.id,
+    });
+
+    // Leave room on unmounting
+    return () => leaveRoom();
+  }, []);
+
+  if (!roomInfo) {
+    return <p>Loading...</p>;
+  }
+
   return (
     <div className={classes.root}>
-      <RoomNav roomTitle="Test Room" />
+      <RoomNav roomTitle={roomInfo.name} />
       <Grid container spacing={2} className={classes.main}>
         <Grid item xs={12} md={8} lg={9}>
           <div className={classes.videoDiv}>
@@ -46,7 +90,7 @@ const Room = () => {
           />
           <Playlist display={!viewChat} />
           <RoomChat display={viewChat} />
-          <MemberList />
+          <MemberList members={roomInfo.members} />
           <RoomSettings open={openSettings} setOpen={setOpenSettings} />
         </Grid>
       </Grid>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { Button, makeStyles, Popover, Typography } from '@material-ui/core';
 import SettingsIcon from '@material-ui/icons/Settings';
 
@@ -48,9 +49,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const members = ['Pragun Saini', 'Ripunjay Saini'];
-
-const MemberList = () => {
+const MemberList = ({ members }) => {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -75,7 +74,7 @@ const MemberList = () => {
             key={i}
             className={classes.member}
             variant="body2">
-            {member}
+            {member.name}
             <SettingsIcon
               fontSize="small"
               color="primary"
@@ -101,6 +100,10 @@ const MemberList = () => {
       </div>
     </div>
   );
+};
+
+MemberList.propTypes = {
+  members: PropTypes.array,
 };
 
 export default MemberList;
