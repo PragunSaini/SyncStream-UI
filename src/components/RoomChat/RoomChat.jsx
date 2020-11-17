@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles, Typography, InputBase, fade } from '@material-ui/core';
 
@@ -51,10 +51,14 @@ const useItemStyles = makeStyles(theme => ({
     backgroundColor: fade(theme.palette.grey[400], 0.1),
     padding: theme.spacing(1, 2),
     borderRadius: '0 15px 15px 15px',
+    maxWidth: '100%',
   },
   name: {
     fontWeight: theme.typography.fontWeightBold,
     margin: theme.spacing(0.5, 0),
+  },
+  msg: {
+    wordWrap: 'break-word',
   },
 }));
 
@@ -62,9 +66,16 @@ const RoomChat = ({ display, name }) => {
   const classes = useStyles();
   const [msg, setMsg] = useState('');
   const [chats, setChats] = useState([]);
+  const divRef = useRef(null);
 
   useEffect(() => {
-    subscribeChatMessage(data => setChats(chats => [...chats, data]));
+    subscribeChatMessage(data => {
+      setChats(chats => [...chats, data]);
+      // Scroll to new chat
+      if (divRef) {
+        divRef.current.scrollTop = divRef.current.scrollHeight;
+      }
+    });
   }, []);
 
   const onSendChat = e => {
@@ -77,7 +88,7 @@ const RoomChat = ({ display, name }) => {
 
   return (
     <div className={`${classes.root} ${display ? '' : classes.noDisplay}`}>
-      <div className={classes.chats}>
+      <div className={classes.chats} ref={divRef}>
         {chats.map((chat, ind) => (
           // eslint-disable-next-line
           <ChatItem msg={chat} key={ind} />
@@ -102,7 +113,9 @@ const ChatItem = ({ msg }) => {
       <Typography variant="body2" className={classes.name}>
         {msg.name}
       </Typography>
-      <Typography variant="body1">{msg.msg}</Typography>
+      <Typography variant="body1" className={classes.msg}>
+        {msg.msg}
+      </Typography>
     </div>
   );
 };

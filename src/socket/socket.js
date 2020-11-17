@@ -75,6 +75,38 @@ export const subscribePlayDown = callback => {
   socket.on('PLAY_DOWN', data => callback(data));
 };
 
+export const subscribeLoad = callback => {
+  socket.on('LOAD', data => callback(data));
+};
+
+export const startVideo = () => {
+  socket.emit('START');
+};
+
+export const subscribeSync = callback => {
+  socket.on('SYNC', data => callback(data));
+};
+
+export const endVideo = data => {
+  socket.emit('END', data);
+};
+
+export const pauseVideo = data => {
+  socket.emit('PAUSE', data);
+};
+
+export const subscribePauseVideo = callback => {
+  socket.on('PAUSE', data => callback(data));
+};
+
+export const playVideo = () => {
+  socket.emit('PLAY');
+};
+
+export const subscribePlayVideo = callback => {
+  socket.on('PLAY', () => callback());
+};
+
 // TODO: REMOVE THIS CHAT STUDF
 export const subscribe = cb => {
   if (!socket) return;

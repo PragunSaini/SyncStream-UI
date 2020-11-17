@@ -43,6 +43,7 @@ const Room = () => {
   const classes = useStyles();
   const { roomid } = useParams();
   const { userData } = useAuth();
+
   const [roomInfo, setRoomInfo] = useState(null);
   const [viewChat, setViewChat] = useState(true);
   const [openSettings, setOpenSettings] = useState(false);
