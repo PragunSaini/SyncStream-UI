@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Button, makeStyles, Popover, Typography } from '@material-ui/core';
 import SettingsIcon from '@material-ui/icons/Settings';
+import PersonIcon from '@material-ui/icons/Person';
+import FaceIcon from '@material-ui/icons/Face';
+
+import { promoteMember, demoteMember, kickMember } from '../../socket/socket';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -52,14 +56,29 @@ const useStyles = makeStyles(theme => ({
 const MemberList = ({ members }) => {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
+  const [mkey, setMkey] = useState(null);
   const open = Boolean(anchorEl);
 
-  const handlePopoverOpen = event => {
+  const handlePopoverOpen = (event, memkey) => {
     setAnchorEl(event.currentTarget);
+    setMkey(memkey);
   };
 
   const handlePopoverClose = () => {
     setAnchorEl(null);
+  };
+
+  const onPromote = () => {
+    promoteMember(mkey);
+  };
+
+  const onDemote = () => {
+    demoteMember(mkey);
+  };
+
+  const onKick = () => {
+    kickMember(mkey);
+    handlePopoverClose();
   };
 
   return (
@@ -68,19 +87,25 @@ const MemberList = ({ members }) => {
         0 Members
       </Typography>
       <div className={classes.memberDiv}>
-        {members.map((member, i) => (
+        {Object.keys(members).map(mkey => (
           <Typography
             // eslint-disable-next-line
-            key={i}
+            key={mkey}
             className={classes.member}
             variant="body2">
-            {member.name}
+            {members[mkey].name}
             <SettingsIcon
               fontSize="small"
               color="primary"
               className={classes.memberConfig}
-              onClick={handlePopoverOpen}
+              onClick={e => handlePopoverOpen(e, mkey)}
             />
+            {members[mkey].type === 'Owner' && (
+              <FaceIcon fontSize="small" color="primary" />
+            )}
+            {members[mkey].type === 'Mod' && (
+              <PersonIcon fontSize="small" color="primary" />
+            )}
           </Typography>
         ))}
         <Popover
@@ -93,9 +118,9 @@ const MemberList = ({ members }) => {
           }}
           transformOrigin={{ vertical: 'top', horizontal: 'center' }}
           onClose={handlePopoverClose}>
-          <Button>Promote</Button>
-          <Button disabled>Demote</Button>
-          <Button>Kick</Button>
+          <Button onClick={onPromote}>Promote</Button>
+          <Button onClick={onDemote}>Demote</Button>
+          <Button onClick={onKick}>Kick</Button>
         </Popover>
       </div>
     </div>

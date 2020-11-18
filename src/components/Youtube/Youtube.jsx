@@ -12,6 +12,9 @@ import {
   subscribePauseVideo,
   playVideo,
   subscribePlayVideo,
+  removePlayerListeners,
+  subscribeCurrent,
+  sendCurrentRequest,
 } from '../../socket/socket';
 
 const useStyles = makeStyles(theme => ({
@@ -54,12 +57,17 @@ const Youtube = () => {
 
   const onReady = e => setPlayer(e.target);
 
+  useEffect(() => {
+    console.log(player);
+  }, [player]);
+
   const setPausedSeekChecker = () => {
     timeRef.current = player.getCurrentTime();
     return setInterval(() => {
       if (!playRef.current) {
         if (Math.abs(player.getCurrentTime() - timeRef.current) > 0.5) {
           timeRef.current = player.getCurrentTime();
+          console.log(player.getCurrentTime());
           pauseVideo(player.getCurrentTime());
         }
       }
@@ -67,63 +75,83 @@ const Youtube = () => {
   };
 
   useEffect(() => {
-    subscribeLoad(data => {
-      if (player) {
-        setVid(data);
-        vidRef.current = data;
-        player.loadVideoById(data);
-        player.pauseVideo();
-        startVideo();
-        player.playVideo();
-        playRef.current = true;
-      }
-    });
-
-    subscribeSync(data => {
-      if (player) {
-        if (Math.abs(player.getCurrentTime() - data) > 1) {
-          player.seekTo(data, true);
-        }
-      }
-    });
-
-    subscribePauseVideo(data => {
-      if (player) {
-        player.pauseVideo();
-        player.seekTo(data, true);
-        playRef.current = false;
-        seekRef.current = setPausedSeekChecker();
-      }
-    });
-
-    subscribePlayVideo(() => {
-      if (player) {
-        player.playVideo();
-        playRef.current = true;
-        clearInterval(seekRef.current);
-      }
-    });
-
     if (player) {
-      player.addEventListener('onStateChange', e => {
-        if (e.data === 0) {
-          // video ended
-          endVideo(vidRef.current);
-        } else if (e.data === 2) {
-          // video paused
-          pauseVideo(player.getCurrentTime());
+      subscribeLoad(data => {
+        if (player) {
+          setVid(data);
+          vidRef.current = data;
+          player.loadVideoById(data);
+          player.pauseVideo();
+          startVideo();
+          player.playVideo();
+          playRef.current = true;
+        }
+      });
+
+      subscribeCurrent(data => {
+        setVid(data.vid);
+        vidRef.current = data.vid;
+        player.loadVideoById(data.vid);
+        if (data.state === 'PAUSED') {
+          player.seekTo(data.time, true);
           playRef.current = false;
-          seekRef.current = setPausedSeekChecker();
-        } else if (e.data === 1) {
-          // video playing
-          if (!playRef.current) {
-            playVideo();
-            clearInterval(seekRef.current);
-            playRef.current = true;
+          setPausedSeekChecker();
+        } else {
+          player.playVideo();
+          playRef.current = true;
+        }
+      });
+
+      subscribeSync(data => {
+        if (player) {
+          if (Math.abs(player.getCurrentTime() - data) > 1) {
+            player.seekTo(data, true);
           }
         }
       });
+
+      subscribePauseVideo(data => {
+        if (player) {
+          player.pauseVideo();
+          player.seekTo(data, true);
+          playRef.current = false;
+          seekRef.current = setPausedSeekChecker();
+        }
+      });
+
+      subscribePlayVideo(() => {
+        if (player) {
+          player.playVideo();
+          playRef.current = true;
+          clearInterval(seekRef.current);
+        }
+      });
+
+      sendCurrentRequest();
+
+      if (player) {
+        player.addEventListener('onStateChange', e => {
+          console.log(e.data);
+          if (e.data === 0) {
+            // video ended
+            endVideo(vidRef.current);
+          } else if (e.data === 2) {
+            // video paused
+            pauseVideo(player.getCurrentTime());
+            playRef.current = false;
+            seekRef.current = setPausedSeekChecker();
+          } else if (e.data === 1) {
+            // video playing
+            if (!playRef.current) {
+              playVideo();
+              clearInterval(seekRef.current);
+              playRef.current = true;
+            }
+          }
+        });
+      }
     }
+    return () => removePlayerListeners();
   }, [player]);
 
   // TODO: New player sync, cleanup of unmounting events

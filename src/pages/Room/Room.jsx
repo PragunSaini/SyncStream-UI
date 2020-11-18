@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import { Grid, makeStyles } from '@material-ui/core';
 
 import { useAuth } from '../../utils/authContext';
@@ -13,6 +13,9 @@ import {
   subscribePlayDelete,
   subscribePlayDown,
   subscribePlayUp,
+  subscribeDemote,
+  subscribePromote,
+  subscribeKick,
 } from '../../socket/socket';
 
 import Youtube from '../../components/Youtube/Youtube';
@@ -42,6 +45,7 @@ const useStyles = makeStyles(theme => ({
 const Room = () => {
   const classes = useStyles();
   const { roomid } = useParams();
+  const history = useHistory();
   const { userData } = useAuth();
 
   const [roomInfo, setRoomInfo] = useState(null);
@@ -55,13 +59,35 @@ const Room = () => {
     subscribeNewJoin(data =>
       setRoomInfo(roominfo => ({
         ...roominfo,
-        members: [...roominfo.members, data],
+        members: { ...roominfo.members, [data.socketid]: data },
       }))
     );
+
     subscribeMemberExit(data =>
+      setRoomInfo(roominfo => {
+        const temp = { ...roominfo };
+        delete temp.members[data];
+        return temp;
+      })
+    );
+
+    subscribePromote(data =>
       setRoomInfo(roominfo => ({
         ...roominfo,
-        members: roominfo.members.filter(member => member.socketid !== data),
+        members: {
+          ...roominfo.members,
+          [data]: { ...roominfo.members[data], type: 'Mod' },
+        },
+      }))
+    );
+
+    subscribeDemote(data =>
+      setRoomInfo(roominfo => ({
+        ...roominfo,
+        members: {
+          ...roominfo.members,
+          [data]: { ...roominfo.members[data], type: 'Guest' },
+        },
       }))
     );
 
@@ -95,6 +121,11 @@ const Room = () => {
         return { ...roominfo, playlist };
       })
     );
+
+    subscribeKick(() => {
+      leaveRoom();
+      history.push('/');
+    });
 
     // Send room joining event
     joinRoom(roomid, {

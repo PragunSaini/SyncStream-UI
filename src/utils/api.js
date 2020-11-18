@@ -2,8 +2,9 @@ import axios from 'axios';
 
 const API_URL =
   process.env.NODE_ENV === 'production'
-    ? 'https://syncstream.southeastasia.cloudapp.azure.com'
+    ? 'http://192.168.1.10:8000'
     : 'http://localhost:8000';
+// ? 'https://syncstream.southeastasia.cloudapp.azure.com'
 
 const getHeaders = () => {
   const userData = JSON.parse(window.localStorage.getItem('user')) || null;

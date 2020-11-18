@@ -1,9 +1,10 @@
 import { io } from 'socket.io-client';
 
 const SOCKET_URL =
-  process.env.NODE_ENV === 'production'
-    ? 'https://syncstream.southeastasia.cloudapp.azure.com'
+  process.env.NODE_ENV !== 'production'
+    ? 'http://192.168.1.10:8000'
     : 'http://localhost:8000';
+// ? 'https://syncstream.southeastasia.cloudapp.azure.com'
 
 let socket = io(SOCKET_URL);
 
@@ -105,6 +106,45 @@ export const playVideo = () => {
 
 export const subscribePlayVideo = callback => {
   socket.on('PLAY', () => callback());
+};
+
+export const subscribeCurrent = callback => {
+  socket.on('CURRENT', data => callback(data));
+};
+
+export const sendCurrentRequest = () => {
+  socket.emit('CURRENT');
+};
+
+export const removePlayerListeners = () => {
+  socket.off('PLAY');
+  socket.off('PAUSE');
+  socket.off('SYNC');
+  socket.off('LOAD');
+};
+
+export const promoteMember = data => {
+  socket.emit('PROMOTE', data);
+};
+
+export const demoteMember = data => {
+  socket.emit('DEMOTE', data);
+};
+
+export const subscribePromote = callback => {
+  socket.on('PROMOTE', data => callback(data));
+};
+
+export const subscribeDemote = callback => {
+  socket.on('DEMOTE', data => callback(data));
+};
+
+export const kickMember = data => {
+  socket.emit('KICK', data);
+};
+
+export const subscribeKick = callback => {
+  socket.on('KICK', () => callback());
 };
 
 // TODO: REMOVE THIS CHAT STUDF
