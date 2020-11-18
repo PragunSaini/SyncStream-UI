@@ -27,6 +27,7 @@ import RoomChat from '../../components/RoomChat/RoomChat';
 import Playlist from '../../components/Playlist/Playlist';
 import MemberList from '../../components/MemberList/MemberList';
 import RoomSettings from '../../components/RoomSettings/RoomSettings';
+import Loader from '../../components/Loader/Loader';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -145,7 +146,7 @@ const Room = () => {
   }, []);
 
   if (!roomInfo) {
-    return <p>Loading...</p>;
+    return <Loader />;
   }
 
   return (

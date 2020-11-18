@@ -2,9 +2,9 @@ import { io } from 'socket.io-client';
 
 const SOCKET_URL =
   process.env.NODE_ENV !== 'production'
-    ? 'http://192.168.1.10:8000'
+    ? 'https://syncstream.southeastasia.cloudapp.azure.com'
     : 'http://localhost:8000';
-// ? 'https://syncstream.southeastasia.cloudapp.azure.com'
+// ? 'http://192.168.1.10:8000'
 
 let socket = io(SOCKET_URL);
 

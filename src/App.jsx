@@ -15,6 +15,7 @@ import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
 import Chat from './pages/Chat/Chat';
 import Room from './pages/Room/Room';
+import Loader from './components/Loader/Loader';
 
 const App = () => {
   const muiTheme = React.useMemo(
@@ -47,7 +48,7 @@ const App = () => {
 const AppRoutes = () => {
   const { loaded } = useAuth();
   if (!loaded) {
-    return <p>Loading...</p>;
+    return <Loader />;
   }
   return (
     <Router>
@@ -64,7 +65,7 @@ const AppRoutes = () => {
         <Route path="/room/:roomid(.{8})">
           <Room />
         </Route>
-        <Route exact path="/">
+        <Route path="/">
           <Home />
         </Route>
       </Switch>
