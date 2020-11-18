@@ -82,7 +82,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const RoomNav = ({ roomTitle, name }) => {
+const RoomNav = ({ roomTitle, name, disabled }) => {
   const classes = useStyles();
   const matches = useMediaQuery(theme => theme.breakpoints.down('sm'));
   const [rec, setRec] = useState(null);
@@ -135,38 +135,43 @@ const RoomNav = ({ roomTitle, name }) => {
               : roomTitle}
           </Typography>
         </Tooltip>
-        <div className={`${classes.search} ${classes.grow}`}>
-          <div className={classes.searchIcon}>
-            <SearchIcon />
+        {!disabled && (
+          <div className={`${classes.search} ${classes.grow}`}>
+            <div className={classes.searchIcon}>
+              <SearchIcon />
+            </div>
+            <InputBase
+              placeholder="Enter youtube link..."
+              classes={{
+                root: classes.inputRoot,
+                input: classes.inputInput,
+              }}
+              inputProps={{ 'aria-label': 'search video' }}
+              onChange={handleLinkChange}
+            />
+            {open && rec && (
+              <ClickAwayListener onClickAway={handleClose}>
+                <Card elevation={2} className={classes.rec}>
+                  <img
+                    src={rec.snippet.thumbnails.default.url}
+                    alt="thumbnail"
+                  />
+                  <div className={classes.recinfo}>
+                    <Typography variant="body1" className={classes.rectitle}>
+                      {rec.snippet.title}
+                    </Typography>
+                    <Typography variant="body2">
+                      {rec.snippet.channelTitle}
+                    </Typography>
+                  </div>
+                  <Button variant="outlined" onClick={onAddPlayItem}>
+                    Add
+                  </Button>
+                </Card>
+              </ClickAwayListener>
+            )}
           </div>
-          <InputBase
-            placeholder="Enter youtube link..."
-            classes={{
-              root: classes.inputRoot,
-              input: classes.inputInput,
-            }}
-            inputProps={{ 'aria-label': 'search video' }}
-            onChange={handleLinkChange}
-          />
-          {open && rec && (
-            <ClickAwayListener onClickAway={handleClose}>
-              <Card elevation={2} className={classes.rec}>
-                <img src={rec.snippet.thumbnails.default.url} alt="thumbnail" />
-                <div className={classes.recinfo}>
-                  <Typography variant="body1" className={classes.rectitle}>
-                    {rec.snippet.title}
-                  </Typography>
-                  <Typography variant="body2">
-                    {rec.snippet.channelTitle}
-                  </Typography>
-                </div>
-                <Button variant="outlined" onClick={onAddPlayItem}>
-                  Add
-                </Button>
-              </Card>
-            </ClickAwayListener>
-          )}
-        </div>
+        )}
       </Toolbar>
     </AppBar>
   );
@@ -175,6 +180,7 @@ const RoomNav = ({ roomTitle, name }) => {
 RoomNav.propTypes = {
   roomTitle: PropTypes.string,
   name: PropTypes.string,
+  disabled: PropTypes.bool,
 };
 
 export default RoomNav;

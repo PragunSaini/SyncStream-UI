@@ -16,6 +16,8 @@ import {
   subscribeDemote,
   subscribePromote,
   subscribeKick,
+  subscribeRename,
+  getSocketId,
 } from '../../socket/socket';
 
 import Youtube from '../../components/Youtube/Youtube';
@@ -127,6 +129,10 @@ const Room = () => {
       history.push('/');
     });
 
+    subscribeRename(data => {
+      setRoomInfo(roominfo => ({ ...roominfo, name: data }));
+    });
+
     // Send room joining event
     joinRoom(roomid, {
       username: userData.username,
@@ -144,7 +150,11 @@ const Room = () => {
 
   return (
     <div className={classes.root}>
-      <RoomNav roomTitle={roomInfo.name} name={userData.name} />
+      <RoomNav
+        roomTitle={roomInfo.name}
+        name={userData.name}
+        disabled={roomInfo && roomInfo.members[getSocketId()].type === 'Guest'}
+      />
       <Grid container spacing={2} className={classes.main}>
         <Grid item xs={12} md={8} lg={9}>
           <div className={classes.videoDiv}>
@@ -159,7 +169,13 @@ const Room = () => {
           <Playlist display={!viewChat} playlist={roomInfo.playlist} />
           <RoomChat display={viewChat} name={userData.name} />
           <MemberList members={roomInfo.members} />
-          <RoomSettings open={openSettings} setOpen={setOpenSettings} />
+          <RoomSettings
+            open={openSettings}
+            setOpen={setOpenSettings}
+            roomTitle={roomInfo.name}
+            userData={userData}
+            userType={roomInfo ? roomInfo.members[getSocketId()].type : 'Guest'}
+          />
         </Grid>
       </Grid>
     </div>

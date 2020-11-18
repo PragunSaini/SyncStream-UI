@@ -154,8 +154,6 @@ const Youtube = () => {
     return () => removePlayerListeners();
   }, [player]);
 
-  // TODO: New player sync, cleanup of unmounting events
-
   return (
     <>
       {vid === null && (

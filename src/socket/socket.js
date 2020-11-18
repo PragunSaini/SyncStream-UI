@@ -12,6 +12,10 @@ export const initiateSocket = () => {
   socket = io(SOCKET_URL);
 };
 
+export const getSocketId = () => {
+  return socket.id;
+};
+
 export const disconnectSocket = () => {
   if (socket) socket.disconnect();
 };
@@ -145,6 +149,14 @@ export const kickMember = data => {
 
 export const subscribeKick = callback => {
   socket.on('KICK', () => callback());
+};
+
+export const renameRoom = data => {
+  socket.emit('RENAME', data);
+};
+
+export const subscribeRename = callback => {
+  socket.on('RENAME', data => callback(data));
 };
 
 // TODO: REMOVE THIS CHAT STUDF

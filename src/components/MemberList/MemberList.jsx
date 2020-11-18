@@ -1,11 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Button, makeStyles, Popover, Typography } from '@material-ui/core';
 import SettingsIcon from '@material-ui/icons/Settings';
 import PersonIcon from '@material-ui/icons/Person';
 import FaceIcon from '@material-ui/icons/Face';
 
-import { promoteMember, demoteMember, kickMember } from '../../socket/socket';
+import {
+  promoteMember,
+  demoteMember,
+  kickMember,
+  getSocketId,
+} from '../../socket/socket';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -51,15 +56,24 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
   },
+  hidden: {
+    visibility: 'hidden',
+  },
 }));
 
 const MemberList = ({ members }) => {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const [mkey, setMkey] = useState(null);
+  const [myType, setMyType] = useState('Guest');
   const open = Boolean(anchorEl);
 
+  useEffect(() => {
+    setMyType(members[getSocketId()].type);
+  }, [members]);
+
   const handlePopoverOpen = (event, memkey) => {
+    if (myType === 'Guest') return; // guests cannot access member tools
     setAnchorEl(event.currentTarget);
     setMkey(memkey);
   };
@@ -74,6 +88,7 @@ const MemberList = ({ members }) => {
 
   const onDemote = () => {
     demoteMember(mkey);
+    if (mkey === getSocketId()) handlePopoverClose();
   };
 
   const onKick = () => {
@@ -97,7 +112,9 @@ const MemberList = ({ members }) => {
             <SettingsIcon
               fontSize="small"
               color="primary"
-              className={classes.memberConfig}
+              className={`${classes.memberConfig} ${
+                myType === 'Guest' ? classes.hidden : ''
+              }`}
               onClick={e => handlePopoverOpen(e, mkey)}
             />
             {members[mkey].type === 'Owner' && (
@@ -118,9 +135,21 @@ const MemberList = ({ members }) => {
           }}
           transformOrigin={{ vertical: 'top', horizontal: 'center' }}
           onClose={handlePopoverClose}>
-          <Button onClick={onPromote}>Promote</Button>
-          <Button onClick={onDemote}>Demote</Button>
-          <Button onClick={onKick}>Kick</Button>
+          <Button
+            onClick={onPromote}
+            disabled={mkey && members[mkey].type !== 'Guest'}>
+            Promote
+          </Button>
+          <Button
+            onClick={onDemote}
+            disabled={mkey && members[mkey].type !== 'Mod'}>
+            Demote
+          </Button>
+          <Button
+            onClick={onKick}
+            disabled={mkey && members[mkey].type === 'Owner'}>
+            Kick
+          </Button>
         </Popover>
       </div>
     </div>

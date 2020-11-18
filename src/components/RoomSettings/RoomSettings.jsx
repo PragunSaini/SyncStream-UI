@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   Dialog,
@@ -15,8 +15,11 @@ import {
   TableRow,
   TableCell,
   TableHead,
+  Button,
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
+
+import { renameRoom } from '../../socket/socket';
 
 const useStyles = makeStyles(theme => ({
   closeBtn: {
@@ -30,16 +33,34 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     padding: theme.spacing(0, 1),
     marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
+  },
+  info: {
+    margin: theme.spacing(4, 0, 1, 0),
+  },
+  infoDetail: {
+    marginTop: theme.spacing(1),
+  },
+  infoLight: {
+    fontWeight: theme.typography.fontWeightRegular,
   },
 }));
 
-const RoomSettings = ({ open, setOpen }) => {
+const RoomSettings = ({ open, setOpen, roomTitle, userData, userType }) => {
   const classes = useStyles();
+  const [newName, setNewName] = useState('');
+
+  const onRename = () => {
+    const data = newName.trim();
+    if (data === '') return;
+    renameRoom(data);
+    setNewName('');
+  };
 
   return (
     <Dialog onClose={() => setOpen(false)} open={open} maxWidth="md" fullWidth>
       <DialogTitle>
-        <Typography variant="h6">Settings</Typography>
+        <Typography variant="h6">{roomTitle} | Settings</Typography>
         <IconButton className={classes.closeBtn} onClick={() => setOpen(false)}>
           <CloseIcon />
         </IconButton>
@@ -47,11 +68,44 @@ const RoomSettings = ({ open, setOpen }) => {
       <DialogContent dividers>
         <Grid container spacing={2}>
           <Grid item xs={12} md={6}>
-            <Typography variant="h6">Room Name</Typography>
+            <Typography variant="h6">Change Room Name</Typography>
             <InputBase
-              placeholder="Enter room name..."
+              placeholder="Enter room name"
               classes={{ root: classes.input }}
+              value={newName}
+              onChange={e => setNewName(e.target.value)}
+              disabled={userType === 'Guest'}
             />
+            <Button
+              color="primary"
+              variant="contained"
+              size="small"
+              onClick={onRename}
+              disabled={userType === 'Guest'}>
+              Change
+            </Button>
+            <Typography variant="h5" className={classes.info}>
+              Your Info
+            </Typography>
+            <Typography
+              variant="h6"
+              component="p"
+              className={classes.infoDetail}>
+              Name: <span className={classes.infoLight}>{userData.name}</span>
+            </Typography>
+            <Typography
+              variant="h6"
+              component="p"
+              className={classes.infoDetail}>
+              Username:{' '}
+              <span className={classes.infoLight}>{userData.username}</span>
+            </Typography>
+            <Typography
+              variant="h6"
+              component="p"
+              className={classes.infoDetail}>
+              User Type: <span className={classes.infoLight}>{userType}</span>
+            </Typography>
           </Grid>
           <Grid item xs={12} md={6}>
             <Table>
@@ -65,9 +119,21 @@ const RoomSettings = ({ open, setOpen }) => {
               </TableHead>
               <TableBody>
                 <TableRow>
-                  <TableCell>Add Video</TableCell>
+                  <TableCell>View</TableCell>
                   <TableCell>
                     <Checkbox checked />
+                  </TableCell>
+                  <TableCell>
+                    <Checkbox checked />
+                  </TableCell>
+                  <TableCell>
+                    <Checkbox checked />
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Add Video</TableCell>
+                  <TableCell>
+                    <Checkbox disabled />
                   </TableCell>
                   <TableCell>
                     <Checkbox checked />
@@ -79,7 +145,7 @@ const RoomSettings = ({ open, setOpen }) => {
                 <TableRow>
                   <TableCell>Seek/Play/Pause</TableCell>
                   <TableCell>
-                    <Checkbox checked />
+                    <Checkbox disabled />
                   </TableCell>
                   <TableCell>
                     <Checkbox checked />
@@ -91,7 +157,7 @@ const RoomSettings = ({ open, setOpen }) => {
                 <TableRow>
                   <TableCell>Promote/Demote</TableCell>
                   <TableCell>
-                    <Checkbox />
+                    <Checkbox disabled />
                   </TableCell>
                   <TableCell>
                     <Checkbox checked />
@@ -103,10 +169,10 @@ const RoomSettings = ({ open, setOpen }) => {
                 <TableRow>
                   <TableCell>Kick</TableCell>
                   <TableCell>
-                    <Checkbox />
+                    <Checkbox disabled />
                   </TableCell>
                   <TableCell>
-                    <Checkbox />
+                    <Checkbox disabled />
                   </TableCell>
                   <TableCell>
                     <Checkbox checked />
@@ -124,6 +190,9 @@ const RoomSettings = ({ open, setOpen }) => {
 RoomSettings.propTypes = {
   open: PropTypes.bool,
   setOpen: PropTypes.func,
+  roomTitle: PropTypes.string,
+  userData: PropTypes.object,
+  userType: PropTypes.string,
 };
 
 export default RoomSettings;
