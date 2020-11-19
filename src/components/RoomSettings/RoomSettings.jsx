@@ -60,7 +60,9 @@ const RoomSettings = ({ open, setOpen, roomTitle, userData, userType }) => {
   return (
     <Dialog onClose={() => setOpen(false)} open={open} maxWidth="md" fullWidth>
       <DialogTitle>
-        <Typography variant="h6">{roomTitle} | Settings</Typography>
+        {/* <Typography variant="h6" component="h2"> */}
+        {roomTitle} | Settings
+        {/* </Typography> */}
         <IconButton className={classes.closeBtn} onClick={() => setOpen(false)}>
           <CloseIcon />
         </IconButton>
@@ -68,7 +70,9 @@ const RoomSettings = ({ open, setOpen, roomTitle, userData, userType }) => {
       <DialogContent dividers>
         <Grid container spacing={2}>
           <Grid item xs={12} md={6}>
-            <Typography variant="h6">Change Room Name</Typography>
+            <Typography variant="h6" component="h3">
+              Change Room Name
+            </Typography>
             <InputBase
               placeholder="Enter room name"
               classes={{ root: classes.input }}
@@ -84,7 +88,7 @@ const RoomSettings = ({ open, setOpen, roomTitle, userData, userType }) => {
               disabled={userType === 'Guest'}>
               Change
             </Button>
-            <Typography variant="h5" className={classes.info}>
+            <Typography variant="h5" className={classes.info} component="h3">
               Your Info
             </Typography>
             <Typography

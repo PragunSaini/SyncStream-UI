@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { useParams, useHistory } from 'react-router-dom';
 import { Grid, makeStyles } from '@material-ui/core';
 
@@ -18,7 +19,10 @@ import {
   subscribeKick,
   subscribeRename,
   getSocketId,
+  subscribeNewOwner,
 } from '../../socket/socket';
+
+import { joinRoom as joinRoomRequest } from '../../utils/api';
 
 import Youtube from '../../components/Youtube/Youtube';
 import RoomNav from '../../components/RoomNav/RoomNav';
@@ -45,107 +49,147 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const Room = () => {
+const Room = ({ notify }) => {
   const classes = useStyles();
   const { roomid } = useParams();
   const history = useHistory();
-  const { userData } = useAuth();
+  const { auth, userData } = useAuth();
 
+  const [joined, setJoined] = useState(false);
   const [roomInfo, setRoomInfo] = useState(null);
   const [viewChat, setViewChat] = useState(true);
   const [openSettings, setOpenSettings] = useState(false);
 
   useEffect(() => {
-    // Subscribe to socket events
-    subscribeRoomInfo(data => setRoomInfo(data));
-
-    subscribeNewJoin(data =>
-      setRoomInfo(roominfo => ({
-        ...roominfo,
-        members: { ...roominfo.members, [data.socketid]: data },
-      }))
-    );
-
-    subscribeMemberExit(data =>
-      setRoomInfo(roominfo => {
-        const temp = { ...roominfo };
-        delete temp.members[data];
-        return temp;
-      })
-    );
-
-    subscribePromote(data =>
-      setRoomInfo(roominfo => ({
-        ...roominfo,
-        members: {
-          ...roominfo.members,
-          [data]: { ...roominfo.members[data], type: 'Mod' },
-        },
-      }))
-    );
-
-    subscribeDemote(data =>
-      setRoomInfo(roominfo => ({
-        ...roominfo,
-        members: {
-          ...roominfo.members,
-          [data]: { ...roominfo.members[data], type: 'Guest' },
-        },
-      }))
-    );
-
-    subscribePlayAdd(data =>
-      setRoomInfo(roominfo => ({
-        ...roominfo,
-        playlist: [...roominfo.playlist, data],
-      }))
-    );
-    subscribePlayDelete(data =>
-      setRoomInfo(roominfo => ({
-        ...roominfo,
-        playlist: roominfo.playlist.filter(play => play.id !== data),
-      }))
-    );
-    subscribePlayUp(data =>
-      setRoomInfo(roominfo => {
-        const playlist = [...roominfo.playlist];
-        const ind = playlist.findIndex(item => item.id === data);
-        if (ind === 0) return playlist;
-        [playlist[ind], playlist[ind - 1]] = [playlist[ind - 1], playlist[ind]];
-        return { ...roominfo, playlist };
-      })
-    );
-    subscribePlayDown(data =>
-      setRoomInfo(roominfo => {
-        const playlist = [...roominfo.playlist];
-        const ind = playlist.findIndex(item => item.id === data);
-        if (ind === playlist.length - 1) return playlist;
-        [playlist[ind], playlist[ind + 1]] = [playlist[ind + 1], playlist[ind]];
-        return { ...roominfo, playlist };
-      })
-    );
-
-    subscribeKick(() => {
-      leaveRoom();
+    if (!auth) {
+      notify('Please login first');
       history.push('/');
-    });
-
-    subscribeRename(data => {
-      setRoomInfo(roominfo => ({ ...roominfo, name: data }));
-    });
-
-    // Send room joining event
-    joinRoom(roomid, {
-      username: userData.username,
-      name: userData.name,
-      id: userData.id,
-    });
-
-    // Leave room on unmounting
-    return () => leaveRoom();
+    } else {
+      joinRoomRequest(roomid)
+        .then(() => {
+          setJoined(true);
+        })
+        .catch(() => {
+          notify('This room does not exist');
+          history.push('/');
+        });
+    }
   }, []);
 
-  if (!roomInfo) {
+  useEffect(() => {
+    if (joined) {
+      // Subscribe to socket events
+      subscribeRoomInfo(data => setRoomInfo(data));
+
+      subscribeNewJoin(data =>
+        setRoomInfo(roominfo => ({
+          ...roominfo,
+          members: { ...roominfo.members, [data.socketid]: data },
+        }))
+      );
+
+      subscribeMemberExit(data =>
+        setRoomInfo(roominfo => {
+          const temp = { ...roominfo };
+          delete temp.members[data];
+          return temp;
+        })
+      );
+
+      subscribePromote(data =>
+        setRoomInfo(roominfo => ({
+          ...roominfo,
+          members: {
+            ...roominfo.members,
+            [data]: { ...roominfo.members[data], type: 'Mod' },
+          },
+        }))
+      );
+
+      subscribeDemote(data =>
+        setRoomInfo(roominfo => ({
+          ...roominfo,
+          members: {
+            ...roominfo.members,
+            [data]: { ...roominfo.members[data], type: 'Guest' },
+          },
+        }))
+      );
+
+      subscribePlayAdd(data =>
+        setRoomInfo(roominfo => ({
+          ...roominfo,
+          playlist: [...roominfo.playlist, data],
+        }))
+      );
+
+      subscribePlayDelete(data =>
+        setRoomInfo(roominfo => ({
+          ...roominfo,
+          playlist: roominfo.playlist.filter(play => play.id !== data),
+        }))
+      );
+
+      subscribePlayUp(data =>
+        setRoomInfo(roominfo => {
+          const playlist = [...roominfo.playlist];
+          const ind = playlist.findIndex(item => item.id === data);
+          if (ind === 0) return playlist;
+          [playlist[ind], playlist[ind - 1]] = [
+            playlist[ind - 1],
+            playlist[ind],
+          ];
+          return { ...roominfo, playlist };
+        })
+      );
+
+      subscribePlayDown(data =>
+        setRoomInfo(roominfo => {
+          const playlist = [...roominfo.playlist];
+          const ind = playlist.findIndex(item => item.id === data);
+          if (ind === playlist.length - 1) return playlist;
+          [playlist[ind], playlist[ind + 1]] = [
+            playlist[ind + 1],
+            playlist[ind],
+          ];
+          return { ...roominfo, playlist };
+        })
+      );
+
+      subscribeKick(() => {
+        notify('You have been kicked from this room');
+        history.push('/');
+      });
+
+      subscribeRename(data => {
+        setRoomInfo(roominfo => ({ ...roominfo, name: data }));
+      });
+
+      subscribeNewOwner(data => {
+        setRoomInfo(roominfo => ({
+          ...roominfo,
+          members: {
+            ...roominfo.members,
+            [data]: { ...roominfo.members[data], type: 'Owner' },
+          },
+        }));
+      });
+
+      // Send room joining event
+      joinRoom(roomid, {
+        username: userData.username,
+        name: userData.name,
+        id: userData.id,
+      });
+    }
+
+    // Leave room on unmounting
+    return () => {
+      if (joined) leaveRoom();
+    };
+  }, [joined]);
+
+  if (!joined || !roomInfo) {
     return <Loader />;
   }
 
@@ -181,6 +225,10 @@ const Room = () => {
       </Grid>
     </div>
   );
+};
+
+Room.propTypes = {
+  notify: PropTypes.func,
 };
 
 export default Room;

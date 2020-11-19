@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import YouTube from 'react-youtube';
 import { makeStyles, Typography } from '@material-ui/core';
 
@@ -17,7 +17,7 @@ import {
   sendCurrentRequest,
 } from '../../socket/socket';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   youtubeContainer: {
     position: 'relative',
     width: '100%',
@@ -57,17 +57,12 @@ const Youtube = () => {
 
   const onReady = e => setPlayer(e.target);
 
-  useEffect(() => {
-    console.log(player);
-  }, [player]);
-
   const setPausedSeekChecker = () => {
     timeRef.current = player.getCurrentTime();
     return setInterval(() => {
       if (!playRef.current) {
         if (Math.abs(player.getCurrentTime() - timeRef.current) > 0.5) {
           timeRef.current = player.getCurrentTime();
-          console.log(player.getCurrentTime());
           pauseVideo(player.getCurrentTime());
         }
       }
@@ -131,7 +126,6 @@ const Youtube = () => {
 
       if (player) {
         player.addEventListener('onStateChange', e => {
-          console.log(e.data);
           if (e.data === 0) {
             // video ended
             endVideo(vidRef.current);
@@ -183,6 +177,7 @@ const Youtube = () => {
             iv_load_policy: 3,
             playsinline: 1,
             enablejsapi: 1,
+            origin: 'https://syncstream.netlify.app',
           },
         }}
         onReady={onReady}

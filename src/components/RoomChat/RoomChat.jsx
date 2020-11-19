@@ -70,7 +70,7 @@ const RoomChat = ({ display, name }) => {
 
   useEffect(() => {
     subscribeChatMessage(data => {
-      setChats(chats => [...chats, data]);
+      setChats(chatsmsgs => [...chatsmsgs, data]);
       // Scroll to new chat
       if (divRef) {
         divRef.current.scrollTop = divRef.current.scrollHeight;

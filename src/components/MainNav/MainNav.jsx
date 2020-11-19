@@ -70,9 +70,6 @@ const MainNav = () => {
     if (auth) {
       return (
         <>
-          <Button color="inherit" component={RouterLink} to="/chat">
-            Chat
-          </Button>
           <Button
             color="inherit"
             startIcon={<PersonIcon />}
@@ -113,7 +110,7 @@ const MainNav = () => {
   return (
     <AppBar position="static">
       <Toolbar>
-        <Typography variant="h5" className={classes.title}>
+        <Typography variant="h5" component="h1" className={classes.title}>
           <Link component={RouterLink} to="/" color="inherit">
             SyncStream
           </Link>

@@ -92,8 +92,8 @@ const MemberList = ({ members }) => {
   };
 
   const onKick = () => {
-    kickMember(mkey);
     handlePopoverClose();
+    kickMember(mkey);
   };
 
   return (
@@ -102,25 +102,25 @@ const MemberList = ({ members }) => {
         0 Members
       </Typography>
       <div className={classes.memberDiv}>
-        {Object.keys(members).map(mkey => (
+        {Object.keys(members).map(memkey => (
           <Typography
             // eslint-disable-next-line
-            key={mkey}
+            key={memkey}
             className={classes.member}
             variant="body2">
-            {members[mkey].name}
+            {members[memkey].name}
             <SettingsIcon
               fontSize="small"
               color="primary"
               className={`${classes.memberConfig} ${
                 myType === 'Guest' ? classes.hidden : ''
               }`}
-              onClick={e => handlePopoverOpen(e, mkey)}
+              onClick={e => handlePopoverOpen(e, memkey)}
             />
-            {members[mkey].type === 'Owner' && (
+            {members[memkey].type === 'Owner' && (
               <FaceIcon fontSize="small" color="primary" />
             )}
-            {members[mkey].type === 'Mod' && (
+            {members[memkey].type === 'Mod' && (
               <PersonIcon fontSize="small" color="primary" />
             )}
           </Typography>
@@ -137,17 +137,17 @@ const MemberList = ({ members }) => {
           onClose={handlePopoverClose}>
           <Button
             onClick={onPromote}
-            disabled={mkey && members[mkey].type !== 'Guest'}>
+            disabled={mkey && members[mkey]?.type !== 'Guest'}>
             Promote
           </Button>
           <Button
             onClick={onDemote}
-            disabled={mkey && members[mkey].type !== 'Mod'}>
+            disabled={mkey && members[mkey]?.type !== 'Mod'}>
             Demote
           </Button>
           <Button
             onClick={onKick}
-            disabled={mkey && members[mkey].type === 'Owner'}>
+            disabled={mkey && members[mkey]?.type === 'Owner'}>
             Kick
           </Button>
         </Popover>

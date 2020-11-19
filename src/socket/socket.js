@@ -6,6 +6,9 @@ const SOCKET_URL =
     : 'http://localhost:8000';
 // ? 'http://192.168.1.10:8000'
 
+/*
+ * Initializing, Joining and Disconnection
+ */
 let socket = io(SOCKET_URL);
 
 export const initiateSocket = () => {
@@ -40,6 +43,9 @@ export const subscribeRoomInfo = callback => {
   socket.on('ROOM_INFO', data => callback(data));
 };
 
+/*
+ * Chatting events
+ */
 export const sendChat = data => {
   socket.emit('CHAT_MESSAGE', data);
 };
@@ -47,6 +53,10 @@ export const sendChat = data => {
 export const subscribeChatMessage = callback => {
   socket.on('CHAT_MESSAGE', data => callback(data));
 };
+
+/*
+ * Playlist related events
+ */
 
 export const addPlaylistItem = data => {
   socket.emit('PLAY_ADD', data);
@@ -80,6 +90,9 @@ export const subscribePlayDown = callback => {
   socket.on('PLAY_DOWN', data => callback(data));
 };
 
+/*
+ * Video play, pause, load, etc events
+ */
 export const subscribeLoad = callback => {
   socket.on('LOAD', data => callback(data));
 };
@@ -127,6 +140,9 @@ export const removePlayerListeners = () => {
   socket.off('LOAD');
 };
 
+/*
+ * Members handling events
+ */
 export const promoteMember = data => {
   socket.emit('PROMOTE', data);
 };
@@ -151,6 +167,9 @@ export const subscribeKick = callback => {
   socket.on('KICK', () => callback());
 };
 
+/*
+ * Room related events
+ */
 export const renameRoom = data => {
   socket.emit('RENAME', data);
 };
@@ -159,14 +178,6 @@ export const subscribeRename = callback => {
   socket.on('RENAME', data => callback(data));
 };
 
-// TODO: REMOVE THIS CHAT STUDF
-export const subscribe = cb => {
-  if (!socket) return;
-  socket.on('new chat msg', data => {
-    cb(data);
-  });
-};
-
-export const sendMessage = msg => {
-  socket.emit('chat msg', msg);
+export const subscribeNewOwner = callback => {
+  socket.on('NEW_OWNER', data => callback(data));
 };
