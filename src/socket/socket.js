@@ -54,6 +54,10 @@ export const subscribeChatMessage = callback => {
   socket.on('CHAT_MESSAGE', data => callback(data));
 };
 
+export const removeChatListeners = () => {
+  socket.off('CHAT_MESSAGE');
+};
+
 /*
  * Playlist related events
  */
@@ -138,6 +142,7 @@ export const removePlayerListeners = () => {
   socket.off('PAUSE');
   socket.off('SYNC');
   socket.off('LOAD');
+  socket.off('CURRENT');
 };
 
 /*
@@ -180,4 +185,22 @@ export const subscribeRename = callback => {
 
 export const subscribeNewOwner = callback => {
   socket.on('NEW_OWNER', data => callback(data));
+};
+
+/*
+ * Unsubscribe function for Room
+ */
+export const unsubscribeRoom = () => {
+  socket.off('NEW_OWNER');
+  socket.off('RENAME');
+  socket.off('KICK');
+  socket.off('PROMOTE');
+  socket.off('DEMOTE');
+  socket.off('PLAY_ADD');
+  socket.off('PLAY_DELETE');
+  socket.off('PLAY_UP');
+  socket.off('PLAY_DOWN');
+  socket.off('ROOM_INFO');
+  socket.off('NEW_JOIN');
+  socket.off('MEMBER_EXIT');
 };

@@ -99,7 +99,7 @@ const MemberList = ({ members }) => {
   return (
     <div className={classes.root}>
       <Typography className={classes.memberCnt} variant="body1">
-        0 Members
+        {Object.keys(members).length} Members
       </Typography>
       <div className={classes.memberDiv}>
         {Object.keys(members).map(memkey => (

@@ -98,7 +98,7 @@ const Youtube = () => {
       });
 
       subscribeSync(data => {
-        if (player) {
+        if (player && player.getPlayerState() > 0) {
           if (Math.abs(player.getCurrentTime() - data) > 1) {
             player.seekTo(data, true);
           }
@@ -122,6 +122,7 @@ const Youtube = () => {
         }
       });
 
+      // Fetch currently playing video if any
       sendCurrentRequest();
 
       if (player) {
@@ -145,7 +146,10 @@ const Youtube = () => {
         });
       }
     }
-    return () => removePlayerListeners();
+    return () => {
+      clearInterval(seekRef.current);
+      removePlayerListeners();
+    };
   }, [player]);
 
   return (

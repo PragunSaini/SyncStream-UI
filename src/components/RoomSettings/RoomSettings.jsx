@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import {
   Dialog,
@@ -44,17 +44,33 @@ const useStyles = makeStyles(theme => ({
   infoLight: {
     fontWeight: theme.typography.fontWeightRegular,
   },
+  roomlink: {
+    marginTop: theme.spacing(2),
+  },
+  copybtn: {
+    marginTop: theme.spacing(1),
+  },
 }));
 
 const RoomSettings = ({ open, setOpen, roomTitle, userData, userType }) => {
   const classes = useStyles();
   const [newName, setNewName] = useState('');
+  const urlRef = useRef(null);
 
   const onRename = () => {
     const data = newName.trim();
     if (data === '') return;
     renameRoom(data);
     setNewName('');
+  };
+
+  const copyLink = () => {
+    if (urlRef.current) {
+      urlRef.current.style.display = 'block';
+      urlRef.current.select();
+      document.execCommand('copy');
+      urlRef.current.style.display = 'none';
+    }
   };
 
   return (
@@ -87,6 +103,28 @@ const RoomSettings = ({ open, setOpen, roomTitle, userData, userType }) => {
               onClick={onRename}
               disabled={userType === 'Guest'}>
               Change
+            </Button>
+            <Typography
+              variant="h6"
+              component="h3"
+              className={classes.roomlink}>
+              Room Link
+            </Typography>
+            <Typography variant="body1">{window.location.href}</Typography>
+            <input
+              type="text"
+              hidden
+              value={window.location.href}
+              ref={urlRef}
+              readOnly
+            />
+            <Button
+              color="primary"
+              variant="contained"
+              size="small"
+              onClick={copyLink}
+              className={classes.copybtn}>
+              Click to copy
             </Button>
             <Typography variant="h5" className={classes.info} component="h3">
               Your Info
@@ -159,7 +197,7 @@ const RoomSettings = ({ open, setOpen, roomTitle, userData, userType }) => {
                   </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>Promote/Demote</TableCell>
+                  <TableCell>Promote/Demote/Kick</TableCell>
                   <TableCell>
                     <Checkbox disabled />
                   </TableCell>
@@ -171,7 +209,7 @@ const RoomSettings = ({ open, setOpen, roomTitle, userData, userType }) => {
                   </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>Kick</TableCell>
+                  <TableCell>Kick Owner</TableCell>
                   <TableCell>
                     <Checkbox disabled />
                   </TableCell>

@@ -12,19 +12,21 @@ const useStyles = makeStyles(theme => ({
   button: { flexGrow: 1 },
 }));
 
-const RoomMenu = ({ setViewChat, setOpenSettings }) => {
+const RoomMenu = ({ viewChat, setViewChat, setOpenSettings }) => {
   const classes = useStyles();
 
   return (
     <div className={classes.root}>
       <Button
         color="primary"
+        variant={!viewChat ? 'outlined' : 'text'}
         onClick={() => setViewChat(false)}
         className={classes.button}>
         Playlist
       </Button>
       <Button
         color="primary"
+        variant={viewChat ? 'outlined' : 'text'}
         onClick={() => setViewChat(true)}
         className={classes.button}>
         Room Chat
@@ -33,13 +35,14 @@ const RoomMenu = ({ setViewChat, setOpenSettings }) => {
         color="primary"
         className={classes.button}
         onClick={() => setOpenSettings(true)}>
-        Settings
+        Room Info
       </Button>
     </div>
   );
 };
 
 RoomMenu.propTypes = {
+  viewChat: PropTypes.bool,
   setViewChat: PropTypes.func,
   setOpenSettings: PropTypes.func,
 };

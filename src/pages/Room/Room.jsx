@@ -20,6 +20,7 @@ import {
   subscribeRename,
   getSocketId,
   subscribeNewOwner,
+  unsubscribeRoom,
 } from '../../socket/socket';
 
 import { joinRoom as joinRoomRequest } from '../../utils/api';
@@ -185,7 +186,10 @@ const Room = ({ notify }) => {
 
     // Leave room on unmounting
     return () => {
-      if (joined) leaveRoom();
+      if (joined) {
+        unsubscribeRoom();
+        leaveRoom();
+      }
     };
   }, [joined]);
 
@@ -208,6 +212,7 @@ const Room = ({ notify }) => {
         </Grid>
         <Grid item xs={12} md={4} lg={3}>
           <RoomMenu
+            viewChat={viewChat}
             setViewChat={setViewChat}
             setOpenSettings={setOpenSettings}
           />

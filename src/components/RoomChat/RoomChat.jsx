@@ -2,7 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles, Typography, InputBase, fade } from '@material-ui/core';
 
-import { sendChat, subscribeChatMessage } from '../../socket/socket';
+import {
+  sendChat,
+  subscribeChatMessage,
+  removeChatListeners,
+} from '../../socket/socket';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -72,10 +76,12 @@ const RoomChat = ({ display, name }) => {
     subscribeChatMessage(data => {
       setChats(chatsmsgs => [...chatsmsgs, data]);
       // Scroll to new chat
-      if (divRef) {
+      if (divRef.current) {
         divRef.current.scrollTop = divRef.current.scrollHeight;
       }
     });
+
+    return () => removeChatListeners();
   }, []);
 
   const onSendChat = e => {
