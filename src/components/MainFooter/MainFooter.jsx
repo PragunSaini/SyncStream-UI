@@ -1,5 +1,5 @@
 import React from 'react';
-import { makeStyles, Typography } from '@material-ui/core';
+import { makeStyles, Typography, Link } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -27,7 +27,11 @@ const MainFooter = () => {
   return (
     <div className={classes.root}>
       <Typography variant="body1" className={classes.item}>
-        Made by - Pragun Saini
+        <Link
+          href="https://github.com/PragunSaini/SyncStream-UI"
+          color="inherit">
+          Github
+        </Link>
       </Typography>
     </div>
   );
